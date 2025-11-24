@@ -39,3 +39,27 @@ Bazel needs to analyze the expensive repo for the `image` rule, forcing the repo
 - Dormant deps (need to understand how they work, also this is still experimental)
 - Late-bound dep (suggested by @dzbarsky, need to look into this)
 - Trampoline repo with aliases (suggested by @dzbarsky) -- as far as I understand the suggestion, I don't think that it can work
+
+### Downloading the file in a build action
+
+This is the current workaround implemented by rules_img.
+It has the obvious downside of accessing the network in a build rule, which can be problematic for many reasons, including:
+
+- May be disallowed by sandboxing or remote execution environment
+- Is not tracked by `bazel fetch` or `bazel vendor`
+
+It is implemented here as well:
+
+```
+bazel build //download_in_a_build_action:example_image
+ls $(bazel info output_base)/external/+_repo_rules+example_100mib/data.bin
+```
+
+File doesn't exist yet. Bazel successfully defers the download.
+
+```
+bazel build //download_in_a_build_action:example_consumer
+ls $(bazel info output_base)/external/+_repo_rules+example_100mib/data.bin
+```
+
+Now the file exists, which is expected.

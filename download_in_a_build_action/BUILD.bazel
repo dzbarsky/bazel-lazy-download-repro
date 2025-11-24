@@ -1,0 +1,22 @@
+load("//build_rules:image.bzl", "image")
+load("//build_rules:consumer.bzl", "consumer")
+load(":download_lazy.bzl", "download_lazy")
+
+download_lazy(
+    name = "lazy_base",
+    url = "https://ash-speed.hetzner.com/100MB.bin",
+    downloaded_file_path = "lazy_base_image.bin",
+    tags = ["manual"],
+)
+
+image(
+    name = "example_image",
+    base_image = ":lazy_base",
+    layers = [],
+)
+
+consumer(
+    name = "example_consumer",
+    image = ":example_image",
+    tags = ["manual"],
+)
