@@ -3,6 +3,7 @@ module(
     version = "0.0.1",
 )
 
+bazel_dep(name = "bazel_skylib", version = "1.8.2")
 bazel_dep(name = "downloader", version = "0.0.1")
 
 local_path_override(
@@ -10,10 +11,19 @@ local_path_override(
     path = "tools/downloader",
 )
 
+trampolines = use_repo_rule("//repository_rules:trampolines.bzl", "trampolines")
+
+trampolines(
+    name = "trampolines",
+    targets = [
+        "@example_100mib//:data_bin",
+    ],
+)
+
 download = use_repo_rule("//repository_rules:download.bzl", "download")
 
 download(
     name = "example_100mib",
     url = "https://ash-speed.hetzner.com/100MB.bin",
-    downloaded_file_path = "data.bin",
+    downloaded_file_path = "data_bin",
 )

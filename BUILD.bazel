@@ -1,3 +1,4 @@
+load("@bazel_skylib//rules:common_settings.bzl", "bool_flag", "string_flag")
 load("//build_rules:image.bzl", "image")
 load("//build_rules:consumer.bzl", "consumer")
 
@@ -7,7 +8,7 @@ load("//build_rules:consumer.bzl", "consumer")
 # consumer rule is built.
 image(
     name = "example_image",
-    base_image = "@example_100mib//:data.bin",
+    base_image = "@trampolines//:example_100mib_data.bin",
     layers = [],
 )
 
@@ -18,4 +19,20 @@ consumer(
     name = "example_consumer",
     image = ":example_image",
     tags = ["manual"],
+)
+
+### MOVE THIS SOMEWHERE SANE
+
+bool_flag(
+    name = "materialize_blobs",
+    build_setting_default = False,
+    visibility = ["//visibility:public"],
+)
+
+config_setting(
+    name = "materialize_blobs_enabled",
+    flag_values = {
+        ":materialize_blobs": "true",
+    },
+    visibility = ["//visibility:public"],
 )
