@@ -1,0 +1,8 @@
+filegroup(
+    name = "tool_srcs",
+    srcs = [
+        "go.mod",
+        "downloader.go",
+    ],
+    visibility = ["//visibility:public"],
+)

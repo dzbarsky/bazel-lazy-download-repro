@@ -1,0 +1,21 @@
+load("//build_rules:image.bzl", "image")
+load("//build_rules:consumer.bzl", "consumer")
+
+# This rule references the downloaded file from the external repository,
+# but it only passes it on in a provider.
+# We would like to avoid having to donwload the external file unless the
+# consumer rule is built.
+image(
+    name = "example_image",
+    base_image = "@example_100mib//:data.bin",
+    layers = [],
+)
+
+# The consumer rule reads the provider from the image rule,
+# and creates a symlink to the base image file.
+# At this point, Bazel should definitely have downloaded the external file.
+consumer(
+    name = "example_consumer",
+    image = ":example_image",
+    tags = ["manual"],
+)
